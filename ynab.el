@@ -1,3 +1,16 @@
+;;; ynab.el --- YNAB Mode -*- lexical-binding:t -*-
+
+;; Author: Ben MacLaurin <benmaclaurin@icloud.com>
+;; URL: https://github.com/ben-maclaurin/ynab-mode
+;; Version: 1.0.0
+;; Package-Requires: ((emacs "27.1"))
+;; Keywords: ynab, finance
+
+;;; Commentary:
+;;
+;; Manage your finances from the comfort of Emacs.
+;; Requires a [[https://www.ynab.com/pricing][YNAB]] subscription and verified email.
+
 (defvar ynab--budget-id ""
   "User defined YNAB budget ID. Call `'ynab-set-budget-id`'
   to define this variable")
