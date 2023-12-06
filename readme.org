@@ -1,5 +1,5 @@
 * YNAB Mode
-[[ynab-mode.png]]
+[[ynab-mode.svg]]
 
 🌳 Manage your finances from the comfort of Emacs. Requires a YNAB subscription and verified email.
 
