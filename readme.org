@@ -3,6 +3,8 @@
 
 🌳 Manage your finances from the comfort of Emacs. Requires a [[https://www.ynab.com/pricing][YNAB]] subscription and verified email.
 
+/🚧 Unstable and under active development./
+
 ** Features
 - =ynab-budget (M-x y)= open your YNAB budget for the current month
 - =ynab-categories (c)= display categories by their respective category group
