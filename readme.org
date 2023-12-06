@@ -1,0 +1,52 @@
+* YNAB Mode
+[[ynab-mode.png]]
+
+🌳 Manage your finances from the comfort of Emacs. Requires a YNAB subscription and verified email.
+
+** Limitations
+- Currently read-only
+- No transactions view
+- Not availabe on MELPA
+
+Planning to resolve these in a future update.
+
+** Installation
+The package is not available on MELPA so you will need to clone this repository and evaluate manually.
+
+*** Setting your key
+=M-x ynab-set-api-key=
+
+Sets your YNAB API key.
+
+Requirements:
+- A YNAB subscription
+- Verified email on YNAB
+  
+If the above requirements are met, you may create a new API key from: Account Settings -> Developer Settings -> New Token
+
+You can also visit: https://app.ynab.com/settings/developer
+
+*** Setting the budget ID
+=M-x ynab-set-budget-id=
+
+Sets your YNAB budget ID.
+
+Requirements:
+- A valid YNAB budget
+
+You can quickly find your budget ID from the URL of your budget view. e.g. given the following URL:
+
+https://app.ynab.com/64dfafd8-500e-4383-8f81-1822475830ec/budget/202312
+
+..your budget ID would be: 64dfafd8-500e-4383-8f81-1822475830ec
+
+** Example usage
+=M-x ynab-budget=
+
+Open your YNAB budget for the current month.
+
+*** Default keybindings:
+=C-x y=
+
+
+
