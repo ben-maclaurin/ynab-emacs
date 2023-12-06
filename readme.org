@@ -57,5 +57,12 @@ Open your YNAB budget for the current month.
 *** Default keybindings:
 =C-x y=
 
+** What is YNAB?
+
+#+BEGIN_QUOTE
+You Need a Budget (YNAB) (pronounced /ˈwaɪnæb/) is an American multi-platform personal budgeting program based on the envelope system. It is available via desktop computer or mobile app. The software was developed in 2004 by Jesse Mecham, while he was in college pursuing his master's degree in accounting after an experience where he and his wife had no money and needed to improve their budgeting.[1][2] It evolved from a spreadsheet that he created for the budgeting process.
+#+END_QUOTE
+
+Quote from [[https://en.wikipedia.org/wiki/YNAB][Wikipedia]] | [[https://www.ynab.com][YNAB Website]]
 
 
