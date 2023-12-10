@@ -59,6 +59,9 @@ Open your YNAB budget for the current month.
 *** Default keybindings:
 =C-x y=
 
+** Alternatives
+- https://github.com/thoreinstein/ynab.el
+
 ** What is YNAB?
 
 #+BEGIN_QUOTE
