@@ -28,7 +28,7 @@
 
 ;;; Commentary:
 
-;; Manage your finances from the comfort of Emacs.
+;; Manage your YNAB budget in Emacs.
 ;; Requires a [[https://www.ynab.com/pricing][YNAB]] subscription and verified email.
 
 (defconst YNAB--BUDGET-LIST-FORMAT

@@ -1,6 +1,6 @@
 * YNAB Mode
 
-🌳 Manage your finances from the comfort of Emacs. Requires a [[https://www.ynab.com/pricing][YNAB]] subscription and verified email.
+🌳 Manage your YNAB budget from Emacs. Requires a [[https://www.ynab.com/pricing][YNAB]] subscription and verified email.
 
 /🚧 Unstable and under active development./
 
