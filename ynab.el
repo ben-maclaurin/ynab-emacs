@@ -1,13 +1,33 @@
 ;;; ynab.el --- YNAB Mode -*- lexical-binding:t -*-
 
+;; Copyright © 2023
+
 ;; Author: Ben MacLaurin <benmaclaurin@icloud.com>
 ;; URL: https://github.com/ben-maclaurin/ynab-mode
 ;; Version: 1.0.0
-;; Package-Requires: ((emacs "27.1"))
+;; Package-Requires: ((emacs "29"))
+;; Created: 2023-12-10
 ;; Keywords: ynab, finance
 
-;;; Commentary:
+;; This file is NOT part of GNU Emacs.
+
+;;; License:
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 3, or (at your option)
+;; any later version.
 ;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; For a full copy of the GNU General Public License
+;; see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
 ;; Manage your finances from the comfort of Emacs.
 ;; Requires a [[https://www.ynab.com/pricing][YNAB]] subscription and verified email.
 
@@ -402,3 +422,16 @@
     (ynab-update)))
 
 (global-set-key (kbd "C-x y") 'ynab-budget)
+
+
+
+
+
+
+
+
+
+
+
+
+
