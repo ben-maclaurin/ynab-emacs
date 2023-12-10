@@ -2,8 +2,6 @@
 
 🌳 Manage your YNAB budget from Emacs. Requires a [[https://www.ynab.com/pricing][YNAB]] subscription and verified email.
 
-/🚧 Unstable and under active development./
-
 [[https://github.com/ben-maclaurin/ynab-mode/blob/main/ynab-mode.png][Example screenshot]]
 
 ** Features
