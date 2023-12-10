@@ -359,7 +359,7 @@
 
     (ynab--init-and-switch-to-budget-buffer
      (vconcat available)
-     (ynab--retrieve-value 'to_be_budgeted ynab--cached-data))))
+     ynab--to-be-budgeted)))
 
 (defun ynab-underfunded ()
   "Display categories by underfunded"
@@ -378,7 +378,7 @@
 
     (ynab--init-and-switch-to-budget-buffer
      (vconcat underfunded)
-     (ynab--retrieve-value 'to_be_budgeted ynab--cached-data))))
+     ynab--to-be-budgeted)))
 
 (defun ynab-spent ()
   "Display categories where you have spent money"
@@ -397,7 +397,7 @@
 
     (ynab--init-and-switch-to-budget-buffer
      (vconcat spent)
-     (ynab--retrieve-value 'to_be_budgeted ynab--cached-data))))
+     ynab--to-be-budgeted)))
 
 (defun ynab-categories ()
   "Display categories by their respective category group"
@@ -421,7 +421,7 @@
          (push item entries-in-category-group)))
     (ynab--init-and-switch-to-budget-buffer
      (vconcat entries-in-category-group)
-     (ynab--retrieve-value 'to_be_budgeted ynab--cached-data))))
+     ynab--to-be-budgeted)))
 
 (defun ynab-budget ()
   "Open your YNAB budget for the current month"
@@ -431,7 +431,7 @@
       (progn
         (ynab--init-and-switch-to-budget-buffer
          ynab--categories
-         (ynab--retrieve-value 'to_be_budgeted ynab--cached-data)))
+         ynab--to-be-budgeted))
     (ynab-update)))
 
 (global-set-key (kbd "C-x y") 'ynab-budget)
