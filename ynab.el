@@ -38,6 +38,8 @@
    ("Available" 30 t)]
   "Defines a list of column specifications for YNAB budget tabulated-lists")
 
+(defconst YNAB--ENDPOINT "https://api.ynab.com/v1/budgets/")
+
 (defvar ynab--budget-id ""
   "User defined YNAB budget ID. Call `'ynab-set-budget-id`'
   to define this variable")
@@ -55,7 +57,7 @@
           (cons "Authorization" (format "Bearer %s" ynab--api-key)))))
     (request
      (concat
-      "https://api.ynab.com/v1/budgets/"
+      YNAB--ENDPOINT
       ynab--budget-id
       "/months/current")
      :headers headers
@@ -70,13 +72,9 @@
     month))
 
 (defvar ynab--month nil
-  "Store a cache of YNAB data to avoid superfluous file reading or API requests")
-
-(defvar ynab--categories nil
-  "Store a cache of categories specifically, to avoid large number of nested value retrievals!")
-
-(defvar ynab--to-be-budgeted nil
-  "Store the amount the user needs to budget for the current month/cycle")
+  "Store YNAB data to avoid superfluous file reading or API requests")
+(defvar ynab--categories nil)
+(defvar ynab--to-be-budgeted nil)
 
 (defun list-includes-value (value list)
   (if (member value list)
