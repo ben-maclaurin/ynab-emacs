@@ -11,6 +11,13 @@
 ;; Manage your finances from the comfort of Emacs.
 ;; Requires a [[https://www.ynab.com/pricing][YNAB]] subscription and verified email.
 
+(defconst YNAB--BUDGET-LIST-FORMAT
+  [("Category" 60 t)
+   ("Assigned" 30 t)
+   ("Activity" 30 t)
+   ("Available" 30 t)]
+  "Defines a list of column specifications for YNAB budget tabulated-lists")
+
 (defvar ynab--budget-id ""
   "User defined YNAB budget ID. Call `'ynab-set-budget-id`'
   to define this variable")
@@ -76,13 +83,6 @@
                     'category_group_name category)
                    category-groups))))
     category-groups))
-
-(defconst YNAB--BUDGET-LIST-FORMAT
-  [("Category" 60 t)
-   ("Assigned" 30 t)
-   ("Activity" 30 t)
-   ("Available" 30 t)]
-  "Defines a list of column specifications for YNAB budget tabulated-lists")
 
 (defun ynab--init-tabulated-list (list-format list-entries)
   "Creates or gets a buffer named `'YNAB`', sets up and displays a tabulated
