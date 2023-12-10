@@ -299,7 +299,7 @@
 
    You can also visit: https://app.ynab.com/settings/developer"
   (interactive)
-  
+
   (setq ynab--api-key (completing-read "Enter API Key: " nil nil)))
 
 (defun ynab-set-budget-id ()
@@ -339,10 +339,13 @@
   "Display all categories where money is available"
   (interactive)
 
-  
   (let ((available '()))
     (cl-loop
-     for element across (ynab--retrieve-value 'categories ynab--cached-data) do
+     for
+     element
+     across
+     (ynab--retrieve-value 'categories ynab--cached-data)
+     do
      (if (> (ynab--retrieve-value 'balance element) 0)
          (push element available)))
 
@@ -356,7 +359,11 @@
 
   (let ((underfunded '()))
     (cl-loop
-     for item across (ynab--retrieve-value 'categories ynab--cached-data) do
+     for
+     item
+     across
+     (ynab--retrieve-value 'categories ynab--cached-data)
+     do
      (if (ynab--retrieve-value 'goal_under_funded item)
          (if (> (ynab--retrieve-value 'goal_under_funded item) 0)
              (push item underfunded))))
@@ -371,13 +378,18 @@
 
   (let ((spent '()))
     (cl-loop
-     for item across (ynab--retrieve-value 'categories ynab--cached-data) do
+     for
+     item
+     across
+     (ynab--retrieve-value 'categories ynab--cached-data)
+     do
      (if (ynab--retrieve-value 'activity item)
          (if (> 0 (ynab--retrieve-value 'activity item))
              (push item spent))))
 
     (ynab--init-and-switch-to-budget-buffer
-     (vconcat spent) (ynab--retrieve-value 'to_be_budgeted ynab--cached-data))))
+     (vconcat spent)
+     (ynab--retrieve-value 'to_be_budgeted ynab--cached-data))))
 
 (defun ynab-categories ()
   "Display categories by their respective category group"
@@ -390,7 +402,11 @@
           (ynab--get-category-groups-from-categories
            (ynab--retrieve-value 'categories ynab--cached-data)))))
     (cl-loop
-     for item across (ynab--retrieve-value 'categories ynab--cached-data) do
+     for
+     item
+     across
+     (ynab--retrieve-value 'categories ynab--cached-data)
+     do
      (if (string=
           (ynab--retrieve-value 'category_group_name item)
           chosen-category-group)
