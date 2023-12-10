@@ -56,10 +56,7 @@
          (list
           (cons "Authorization" (format "Bearer %s" ynab--api-key)))))
     (request
-     (concat
-      YNAB--ENDPOINT
-      ynab--budget-id
-      "/months/current")
+     (concat YNAB--ENDPOINT ynab--budget-id "/months/current")
      :headers headers
      :sync t
      :parse 'json-read
@@ -330,8 +327,10 @@
            (> (length ynab--budget-id) 0))
       (progn
         (setq ynab--month (ynab--fetch-current-month))
-	(setq ynab--categories (ynab--retrieve-value 'categories ynab--month))
-	(setq ynab--to-be-budgeted (ynab--retrieve-value 'to_be_budgeted ynab--month))
+        (setq ynab--categories
+              (ynab--retrieve-value 'categories ynab--month))
+        (setq ynab--to-be-budgeted
+              (ynab--retrieve-value 'to_be_budgeted ynab--month))
         (ignore-errors
           kill-buffer
           "YNAB")
@@ -347,17 +346,12 @@
 
   (let ((available '()))
     (cl-loop
-     for
-     element
-     across
-     ynab--categories
-     do
+     for element across ynab--categories do
      (if (> (ynab--retrieve-value 'balance element) 0)
          (push element available)))
 
     (ynab--init-and-switch-to-budget-buffer
-     (vconcat available)
-     ynab--to-be-budgeted)))
+     (vconcat available) ynab--to-be-budgeted)))
 
 (defun ynab-underfunded ()
   "Display categories by underfunded"
@@ -365,18 +359,13 @@
 
   (let ((underfunded '()))
     (cl-loop
-     for
-     item
-     across
-     ynab--categories
-     do
+     for item across ynab--categories do
      (if (ynab--retrieve-value 'goal_under_funded item)
          (if (> (ynab--retrieve-value 'goal_under_funded item) 0)
              (push item underfunded))))
 
     (ynab--init-and-switch-to-budget-buffer
-     (vconcat underfunded)
-     ynab--to-be-budgeted)))
+     (vconcat underfunded) ynab--to-be-budgeted)))
 
 (defun ynab-spent ()
   "Display categories where you have spent money"
@@ -384,18 +373,13 @@
 
   (let ((spent '()))
     (cl-loop
-     for
-     item
-     across
-     ynab--categories
-     do
+     for item across ynab--categories do
      (if (ynab--retrieve-value 'activity item)
          (if (> 0 (ynab--retrieve-value 'activity item))
              (push item spent))))
 
     (ynab--init-and-switch-to-budget-buffer
-     (vconcat spent)
-     ynab--to-be-budgeted)))
+     (vconcat spent) ynab--to-be-budgeted)))
 
 (defun ynab-categories ()
   "Display categories by their respective category group"
@@ -408,18 +392,13 @@
           (ynab--get-category-groups-from-categories
            ynab--categories))))
     (cl-loop
-     for
-     item
-     across
-     ynab--categories
-     do
+     for item across ynab--categories do
      (if (string=
           (ynab--retrieve-value 'category_group_name item)
           chosen-category-group)
          (push item entries-in-category-group)))
     (ynab--init-and-switch-to-budget-buffer
-     (vconcat entries-in-category-group)
-     ynab--to-be-budgeted)))
+     (vconcat entries-in-category-group) ynab--to-be-budgeted)))
 
 (defun ynab-budget ()
   "Open your YNAB budget for the current month"
@@ -428,8 +407,7 @@
   (if (> (length ynab--cached-data) 0)
       (progn
         (ynab--init-and-switch-to-budget-buffer
-         ynab--categories
-         ynab--to-be-budgeted))
+         ynab--categories ynab--to-be-budgeted))
     (ynab-update)))
 
 (global-set-key (kbd "C-x y") 'ynab-budget)
