@@ -69,8 +69,14 @@
         (setq month (assoc 'month data)))))
     month))
 
-(defvar ynab--cached-data nil
-  "Store a cache of YNAB data to avoid superfluos file reading or API requests")
+(defvar ynab--month nil
+  "Store a cache of YNAB data to avoid superfluous file reading or API requests")
+
+(defvar ynab--categories nil
+  "Store a cache of categories specifically, to avoid large number of nested value retrievals!")
+
+(defvar ynab--to-be-budgeted nil
+  "Store the amount the user needs to budget for the current month/cycle")
 
 (defun list-includes-value (value list)
   (if (member value list)
@@ -325,7 +331,9 @@
   (if (and (> (length ynab--api-key) 0)
            (> (length ynab--budget-id) 0))
       (progn
-        (setq ynab--cached-data (ynab--fetch-current-month))
+        (setq ynab--month (ynab--fetch-current-month))
+	(setq ynab--categories (ynab--retrieve-value 'categories ynab--month))
+	(setq ynab--to-be-budgeted (ynab--retrieve-value 'to_be_budgeted ynab--month))
         (ignore-errors
           kill-buffer
           "YNAB")
@@ -344,7 +352,7 @@
      for
      element
      across
-     (ynab--retrieve-value 'categories ynab--cached-data)
+     ynab--categories
      do
      (if (> (ynab--retrieve-value 'balance element) 0)
          (push element available)))
@@ -362,7 +370,7 @@
      for
      item
      across
-     (ynab--retrieve-value 'categories ynab--cached-data)
+     ynab--categories
      do
      (if (ynab--retrieve-value 'goal_under_funded item)
          (if (> (ynab--retrieve-value 'goal_under_funded item) 0)
@@ -381,7 +389,7 @@
      for
      item
      across
-     (ynab--retrieve-value 'categories ynab--cached-data)
+     ynab--categories
      do
      (if (ynab--retrieve-value 'activity item)
          (if (> 0 (ynab--retrieve-value 'activity item))
@@ -400,12 +408,12 @@
          (completing-read
           "Category Groups"
           (ynab--get-category-groups-from-categories
-           (ynab--retrieve-value 'categories ynab--cached-data)))))
+           ynab--categories))))
     (cl-loop
      for
      item
      across
-     (ynab--retrieve-value 'categories ynab--cached-data)
+     ynab--categories
      do
      (if (string=
           (ynab--retrieve-value 'category_group_name item)
@@ -422,7 +430,7 @@
   (if (> (length ynab--cached-data) 0)
       (progn
         (ynab--init-and-switch-to-budget-buffer
-         (ynab--retrieve-value 'categories ynab--cached-data)
+         ynab--categories
          (ynab--retrieve-value 'to_be_budgeted ynab--cached-data)))
     (ynab-update)))
 
