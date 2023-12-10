@@ -46,7 +46,7 @@
   "User defined YNAB API key. Call `'ynab-set-api-key`'
   to define this variable")
 
-(defun ynab--request-current-month ()
+(defun ynab--fetch-current-month ()
   "Fetches current month`'s budget data from YNAB API, using `'ynab--api-key`'
    for authorization and returns parsed month information"
   (setq month nil)
@@ -69,7 +69,7 @@
       (setq month (assoc 'month data)))))
   month)
 
-(defun ynab--print-data (data)
+(defun ynab--write-data (data)
   "Saves the `'data`' argument to a file named
   `'ynab-data.lisp`' in Lisp-readable format"
   (with-temp-file "ynab-data.lisp"
@@ -332,7 +332,7 @@
   (if (and (> (length ynab--api-key) 0)
            (> (length ynab--budget-id) 0))
       (progn
-        (ynab--print-data (ynab--request-current-month))
+        (ynab--write-data (ynab--fetch-current-month))
         (ignore-errors
           kill-buffer
           "YNAB")
