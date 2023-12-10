@@ -38,7 +38,6 @@
    ("Available" 30 t)]
   "Defines a list of column specifications for YNAB budget tabulated-lists")
 
-
 (defvar ynab--budget-id ""
   "User defined YNAB budget ID. Call `'ynab-set-budget-id`'
   to define this variable")
@@ -339,80 +338,76 @@
 (defun ynab-available ()
   "Display all categories where money is available"
   (interactive)
-  (let ((data ynab--cached-data)
-        (available '()))
+
+  
+  (let ((available '()))
     (cl-loop
-     for element across (ynab--retrieve-value 'categories data) do
+     for element across (ynab--retrieve-value 'categories ynab--cached-data) do
      (if (> (ynab--retrieve-value 'balance element) 0)
          (push element available)))
 
     (ynab--init-and-switch-to-budget-buffer
      (vconcat available)
-     (ynab--retrieve-value 'to_be_budgeted data))))
+     (ynab--retrieve-value 'to_be_budgeted ynab--cached-data))))
 
 (defun ynab-underfunded ()
   "Display categories by underfunded"
   (interactive)
 
-  (setq data ynab--cached-data)
   (let ((underfunded '()))
     (cl-loop
-     for item across (ynab--retrieve-value 'categories data) do
+     for item across (ynab--retrieve-value 'categories ynab--cached-data) do
      (if (ynab--retrieve-value 'goal_under_funded item)
          (if (> (ynab--retrieve-value 'goal_under_funded item) 0)
              (push item underfunded))))
 
     (ynab--init-and-switch-to-budget-buffer
      (vconcat underfunded)
-     (ynab--retrieve-value 'to_be_budgeted data))))
+     (ynab--retrieve-value 'to_be_budgeted ynab--cached-data))))
 
 (defun ynab-spent ()
   "Display categories where you have spent money"
   (interactive)
 
-  (setq data ynab--cached-data)
   (let ((spent '()))
     (cl-loop
-     for item across (ynab--retrieve-value 'categories data) do
+     for item across (ynab--retrieve-value 'categories ynab--cached-data) do
      (if (ynab--retrieve-value 'activity item)
          (if (> 0 (ynab--retrieve-value 'activity item))
              (push item spent))))
 
     (ynab--init-and-switch-to-budget-buffer
-     (vconcat spent) (ynab--retrieve-value 'to_be_budgeted data))))
+     (vconcat spent) (ynab--retrieve-value 'to_be_budgeted ynab--cached-data))))
 
 (defun ynab-categories ()
   "Display categories by their respective category group"
   (interactive)
-
-  (setq data ynab--cached-data)
 
   (let ((entries-in-category-group '())
         (chosen-category-group
          (completing-read
           "Category Groups"
           (ynab--get-category-groups-from-categories
-           (ynab--retrieve-value 'categories data)))))
+           (ynab--retrieve-value 'categories ynab--cached-data)))))
     (cl-loop
-     for item across (ynab--retrieve-value 'categories data) do
+     for item across (ynab--retrieve-value 'categories ynab--cached-data) do
      (if (string=
           (ynab--retrieve-value 'category_group_name item)
           chosen-category-group)
          (push item entries-in-category-group)))
     (ynab--init-and-switch-to-budget-buffer
      (vconcat entries-in-category-group)
-     (ynab--retrieve-value 'to_be_budgeted data))))
+     (ynab--retrieve-value 'to_be_budgeted ynab--cached-data))))
 
 (defun ynab-budget ()
   "Open your YNAB budget for the current month"
   (interactive)
 
-  (if (file-exists-p "ynab-data.lisp")
+  (if (> (length ynab--cached-data) 0)
       (progn
-        (setq data ynab--cached-data)
         (ynab--init-and-switch-to-budget-buffer
-         (ynab--retrieve-value 'categories data)
-         (ynab--retrieve-value 'to_be_budgeted data)))
+         (ynab--retrieve-value 'categories ynab--cached-data)
+         (ynab--retrieve-value 'to_be_budgeted ynab--cached-data)))
     (ynab-update)))
 
 (global-set-key (kbd "C-x y") 'ynab-budget)
