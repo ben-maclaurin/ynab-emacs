@@ -50,49 +50,50 @@
 (defun ynab--fetch-current-month ()
   "Fetches current month`'s budget data from YNAB API, using `'ynab--api-key`'
    for authorization and returns parsed month information"
-  (setq month nil)
-  (setq headers
-        (list
-         (cons "Authorization" (format "Bearer %s" ynab--api-key))))
-  (request
-   (concat
-    "https://api.ynab.com/v1/budgets/"
-    ynab--budget-id
-    "/months/current")
-   :headers headers
-   :sync t
-   :parse 'json-read
-   :complete
-   (cl-function
-    (lambda (&key data &allow-other-keys)
-      (setq response (json-read-from-string data))
-      (setq data (assoc 'data response))
-      (setq month (assoc 'month data)))))
-  month)
+  (let ((month nil)
+        (headers
+         (list
+          (cons "Authorization" (format "Bearer %s" ynab--api-key)))))
+    (request
+     (concat
+      "https://api.ynab.com/v1/budgets/"
+      ynab--budget-id
+      "/months/current")
+     :headers headers
+     :sync t
+     :parse 'json-read
+     :complete
+     (cl-function
+      (lambda (&key data &allow-other-keys)
+        (setq response (json-read-from-string data))
+        (setq data (assoc 'data response))
+        (setq month (assoc 'month data)))))
+    month))
 
 (defvar ynab--cached-data nil
   "Store a cache of YNAB data to avoid superfluos file reading or API requests")
 
-;; TODO handle exclusion of category before printing data to ynab-data.lisp
+(defun list-includes-value (value list)
+  (if (member value list)
+      t))
+
+;; TODO handle exclusion of category "Internal Master Category" before printing data to ynab-data.lisp
 (defun ynab--get-category-groups-from-categories (categories)
   "Collects and returns unique names of category groups
   from `'categories`', excluding any named `'Internal Master Category`'"
   (let ((category-groups nil))
     (cl-loop
      for category across categories do
-     (if (not
-          (member
-           (ynab--retrieve-value
-            'category_group_name category)
-           category-groups))
-         (if (not
-              (string=
-               (ynab--retrieve-value
-                'category_group_name category)
-               "Internal Master Category"))
-             (push (ynab--retrieve-value
-                    'category_group_name category)
-                   category-groups))))
+     (let ((category-group-name
+            (ynab--retrieve-value 'category_group_name category)))
+       (if (and (not
+                 (list-includes-value
+                  category-group-name category-groups))
+                (not
+                 (string=
+                  category-group-name "Internal Master Category")))
+           (push (ynab--retrieve-value 'category_group_name category)
+                 category-groups))))
     category-groups))
 
 (defun ynab--init-tabulated-list (list-format list-entries)
@@ -128,20 +129,21 @@
   in green if positive, `'All Money Assigned`' if zero, or
   `'You assigned more than you have`' in red if negative.
   Returns the formatted message"
-  (setq message "")
-
-  (if (> to-be-budgeted 0)
-      (setq message
-            (format "%s"
-                    (propertize "Ready to Assign" 'face 'diff-added)))
-    (if (= to-be-budgeted 0)
-        (setq message (format "%s" "All Money Assigned"))
-      (setq message
-            (format "%s"
-                    (propertize "You assigned more than you have"
-                                'face
-                                'diff-removed)))))
-  message)
+  (let ((message ""))
+    (if (> to-be-budgeted 0)
+        (setq message
+              (format "%s"
+                      (propertize "Ready to Assign"
+                                  'face
+                                  'diff-added)))
+      (if (= to-be-budgeted 0)
+          (setq message (format "%s" "All Money Assigned"))
+        (setq message
+              (format "%s"
+                      (propertize "You assigned more than you have"
+                                  'face
+                                  'diff-removed)))))
+    message))
 
 ;; TODO handle exclusion of category before printing data to ynab-data.lisp
 (defun ynab--init-budget-entries (categories to-be-budgeted)
@@ -269,12 +271,12 @@
     (budget-data to-be-budgeted)
   "Initializes a tabulated list with `'YNAB--BUDGET-LIST-FORMAT`' and budget entries
    from `'budget-data`' and `'to-be-budgeted`', then switches to the newly created buffer."
-  (setq buffer
-        (ynab--init-tabulated-list
-         YNAB--BUDGET-LIST-FORMAT
-         (ynab--init-budget-entries budget-data to-be-budgeted)))
-  (switch-to-buffer buffer)
-  (ynab-mode))
+  (let ((buffer
+         (ynab--init-tabulated-list
+          YNAB--BUDGET-LIST-FORMAT
+          (ynab--init-budget-entries budget-data to-be-budgeted))))
+    (switch-to-buffer buffer)
+    (ynab-mode)))
 
 (define-minor-mode ynab-mode
   "Defines the YNAB minor mode"
@@ -298,8 +300,8 @@
 
    You can also visit: https://app.ynab.com/settings/developer"
   (interactive)
-
-  (setq ynab--api-key (completing-read "Enter API key: " nil nil)))
+  
+  (setq ynab--api-key (completing-read "Enter API Key: " nil nil)))
 
 (defun ynab-set-budget-id ()
   "Sets your YNAB budget ID.
@@ -315,7 +317,7 @@
   (interactive)
 
   (setq ynab--budget-id
-        (completing-read "Enter budget ID: " nil nil)))
+        (completing-read "Enter Budget ID: " nil nil)))
 
 (defun ynab-update ()
   "Synchronously pull data from YNAB. Blocking action"
