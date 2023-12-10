@@ -73,10 +73,6 @@
 (defvar ynab--categories nil)
 (defvar ynab--to-be-budgeted nil)
 
-(defun list-includes-value (value list)
-  (if (member value list)
-      t))
-
 ;; TODO handle exclusion of category "Internal Master Category" before printing data to ynab-data.lisp
 (defun ynab--get-category-groups-from-categories (categories)
   "Collects and returns unique names of category groups
@@ -86,9 +82,7 @@
      for category across categories do
      (let ((category-group-name
             (ynab--retrieve-value 'category_group_name category)))
-       (if (and (not
-                 (list-includes-value
-                  category-group-name category-groups))
+       (if (and (not (member category-group-name category-groups))
                 (not
                  (string=
                   category-group-name "Internal Master Category")))
