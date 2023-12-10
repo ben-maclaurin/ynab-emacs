@@ -46,14 +46,29 @@
   :group 'applications)
 
 (defcustom ynab-budget-id ""
-  "User defined YNAB budget ID. Call `'ynab-set-budget-id`'
-  to define this variable"
+  "Sets your YNAB budget ID.
+   Requirements:
+   - A valid YNAB budget
+
+   You can quickly find your budget ID from the URL of your budget view.
+   e.g. given the following URL:
+
+   https://app.ynab.com/64dfafd8-500e-4383-8f81-1822475830ec/budget/202312
+
+   ..your budget ID would be: 64dfafd8-500e-4383-8f81-1822475830ec"
   :group 'ynab
   :type 'string)
 
 (defcustom ynab-api-key ""
-  "User defined YNAB API key. Call `'ynab-set-api-key`'
-  to define this variable"
+  "Sets your YNAB API key.
+   Requirements:
+   - A YNAB subscription
+   - Verified email on YNAB
+
+   If the above requirements are met, you may create a new API key from:
+   Account Settings -> Developer Settings -> New Token
+
+   You can also visit: https://app.ynab.com/settings/developer"
   :group 'ynab
   :type 'string)
 
@@ -292,36 +307,6 @@
 ;;                                              ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun ynab-set-api-key ()
-  "Sets your YNAB API key.
-   Requirements:
-   - A YNAB subscription
-   - Verified email on YNAB
-
-   If the above requirements are met, you may create a new API key from:
-   Account Settings -> Developer Settings -> New Token
-
-   You can also visit: https://app.ynab.com/settings/developer"
-  (interactive)
-
-  (setq ynab--api-key (completing-read "Enter API Key: " nil nil)))
-
-(defun ynab-set-budget-id ()
-  "Sets your YNAB budget ID.
-   Requirements:
-   - A valid YNAB budget
-
-   You can quickly find your budget ID from the URL of your budget view.
-   e.g. given the following URL:
-
-   https://app.ynab.com/64dfafd8-500e-4383-8f81-1822475830ec/budget/202312
-
-   ..your budget ID would be: 64dfafd8-500e-4383-8f81-1822475830ec"
-  (interactive)
-
-  (setq ynab--budget-id
-        (completing-read "Enter Budget ID: " nil nil)))
-
 (defun ynab-update ()
   "Synchronously pull data from YNAB. Blocking action"
   (interactive)
@@ -341,7 +326,7 @@
     (progn
       (with-output-to-temp-buffer "*YNAB ERROR*"
         (princ
-         "You must set your budget ID and API key. Please see: \n\nC-h f ynab-set-budget-id \n\nC-h f ynab-set-api-key")))))
+         "You must set your budget ID and API key. Please see: \n\nC-h v ynab-set-budget-id \n\nC-h v ynab-set-api-key")))))
 
 (defun ynab-available ()
   "Display all categories where money is available"
