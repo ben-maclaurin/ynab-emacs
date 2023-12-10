@@ -16,6 +16,7 @@
 - Currently read-only
 - No transactions view
 - Not availabe on MELPA
+- Only displays current month
 
 Planning to resolve these in a future update.
 
