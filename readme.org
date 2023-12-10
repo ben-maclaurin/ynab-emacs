@@ -27,6 +27,8 @@ The package is not available on MELPA so you will need to clone this repository 
 *** Setting your key
 =M-x ynab-set-api-key=
 
+or: =(setq ynab-api-key "")=
+
 Sets your YNAB API key.
 
 Requirements:
@@ -39,6 +41,8 @@ You can also visit: https://app.ynab.com/settings/developer
 
 *** Setting the budget ID
 =M-x ynab-set-budget-id=
+
+or: =(setq ynab-budget-id "")=
 
 Sets your YNAB budget ID.
 

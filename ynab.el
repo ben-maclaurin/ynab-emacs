@@ -40,13 +40,22 @@
 
 (defconst ynab--endpoint "https://api.ynab.com/v1/budgets/")
 
-(defvar ynab--budget-id ""
-  "User defined YNAB budget ID. Call `'ynab-set-budget-id`'
-  to define this variable")
+(defgroup ynab nil
+  "Customization group for YNAB (You Need A Budget) integration."
+  :prefix "ynab-"
+  :group 'applications)
 
-(defvar ynab--api-key ""
+(defcustom ynab-budget-id ""
+  "User defined YNAB budget ID. Call `'ynab-set-budget-id`'
+  to define this variable"
+  :group 'ynab
+  :type 'string)
+
+(defcustom ynab-api-key ""
   "User defined YNAB API key. Call `'ynab-set-api-key`'
-  to define this variable")
+  to define this variable"
+  :group 'ynab
+  :type 'string)
 
 (defun ynab--fetch-current-month ()
   "Fetches current month`'s budget data from YNAB API, using `'ynab--api-key`'
@@ -54,9 +63,9 @@
   (let ((month nil)
         (headers
          (list
-          (cons "Authorization" (format "Bearer %s" ynab--api-key)))))
+          (cons "Authorization" (format "Bearer %s" ynab-api-key)))))
     (request
-     (concat ynab--endpoint ynab--budget-id "/months/current")
+     (concat ynab--endpoint ynab-budget-id "/months/current")
      :headers headers
      :sync t
      :parse 'json-read
@@ -317,8 +326,8 @@
   "Synchronously pull data from YNAB. Blocking action"
   (interactive)
 
-  (if (and (> (length ynab--api-key) 0)
-           (> (length ynab--budget-id) 0))
+  (if (and (> (length ynab-api-key) 0)
+           (> (length ynab-budget-id) 0))
       (progn
         (setq ynab--month (ynab--fetch-current-month))
         (setq ynab--categories
@@ -398,7 +407,7 @@
   "Open your YNAB budget for the current month"
   (interactive)
 
-  (if (> (length ynab--cached-data) 0)
+  (if (> (length ynab--month) 0)
       (progn
         (ynab--init-and-switch-to-budget-buffer
          ynab--categories ynab--to-be-budgeted))
