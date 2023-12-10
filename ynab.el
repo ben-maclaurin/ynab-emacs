@@ -31,14 +31,14 @@
 ;; Manage your YNAB budget in Emacs.
 ;; Requires a [[https://www.ynab.com/pricing][YNAB]] subscription and verified email.
 
-(defconst YNAB--BUDGET-LIST-FORMAT
+(defconst ynab--budget-list-format
   [("Category" 60 t)
    ("Assigned" 30 t)
    ("Activity" 30 t)
    ("Available" 30 t)]
   "Defines a list of column specifications for YNAB budget tabulated-lists")
 
-(defconst YNAB--ENDPOINT "https://api.ynab.com/v1/budgets/")
+(defconst ynab--endpoint "https://api.ynab.com/v1/budgets/")
 
 (defvar ynab--budget-id ""
   "User defined YNAB budget ID. Call `'ynab-set-budget-id`'
@@ -56,7 +56,7 @@
          (list
           (cons "Authorization" (format "Bearer %s" ynab--api-key)))))
     (request
-     (concat YNAB--ENDPOINT ynab--budget-id "/months/current")
+     (concat ynab--endpoint ynab--budget-id "/months/current")
      :headers headers
      :sync t
      :parse 'json-read
@@ -263,11 +263,11 @@
 
 (defun ynab--init-and-switch-to-budget-buffer
     (budget-data to-be-budgeted)
-  "Initializes a tabulated list with `'YNAB--BUDGET-LIST-FORMAT`' and budget entries
+  "Initializes a tabulated list with `'ynab--budget-list-format`' and budget entries
    from `'budget-data`' and `'to-be-budgeted`', then switches to the newly created buffer."
   (let ((buffer
          (ynab--init-tabulated-list
-          YNAB--BUDGET-LIST-FORMAT
+          ynab--budget-list-format
           (ynab--init-budget-entries budget-data to-be-budgeted))))
     (switch-to-buffer buffer)
     (ynab-mode)))
