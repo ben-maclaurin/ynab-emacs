@@ -38,6 +38,7 @@
    ("Available" 30 t)]
   "Defines a list of column specifications for YNAB budget tabulated-lists")
 
+
 (defvar ynab--budget-id ""
   "User defined YNAB budget ID. Call `'ynab-set-budget-id`'
   to define this variable")
@@ -69,18 +70,8 @@
       (setq month (assoc 'month data)))))
   month)
 
-(defun ynab--write-data (data)
-  "Saves the `'data`' argument to a file named
-  `'ynab-data.lisp`' in Lisp-readable format"
-  (with-temp-file "ynab-data.lisp"
-    (print data (current-buffer))))
-
-(defun ynab--read-data ()
-  "Reads and returns the contents of
-  `'ynab-data.lisp`', interpreting it as Lisp data"
-  (with-temp-buffer
-    (insert-file-contents "ynab-data.lisp")
-    (read (current-buffer))))
+(defvar ynab--cached-data nil
+  "Store a cache of YNAB data to avoid superfluos file reading or API requests")
 
 ;; TODO handle exclusion of category before printing data to ynab-data.lisp
 (defun ynab--get-category-groups-from-categories (categories)
@@ -282,7 +273,8 @@
         (ynab--init-tabulated-list
          YNAB--BUDGET-LIST-FORMAT
          (ynab--init-budget-entries budget-data to-be-budgeted)))
-  (switch-to-buffer buffer) (ynab-mode))
+  (switch-to-buffer buffer)
+  (ynab-mode))
 
 (define-minor-mode ynab-mode
   "Defines the YNAB minor mode"
@@ -332,7 +324,7 @@
   (if (and (> (length ynab--api-key) 0)
            (> (length ynab--budget-id) 0))
       (progn
-        (ynab--write-data (ynab--fetch-current-month))
+        (setq ynab--cached-data (ynab--fetch-current-month))
         (ignore-errors
           kill-buffer
           "YNAB")
@@ -345,7 +337,7 @@
 (defun ynab-available ()
   "Display all categories where money is available"
   (interactive)
-  (let ((data (ynab--read-data))
+  (let ((data ynab--cached-data)
         (available '()))
     (cl-loop
      for element across (ynab--retrieve-value 'categories data) do
@@ -360,7 +352,7 @@
   "Display categories by underfunded"
   (interactive)
 
-  (setq data (ynab--read-data))
+  (setq data ynab--cached-data)
   (let ((underfunded '()))
     (cl-loop
      for item across (ynab--retrieve-value 'categories data) do
@@ -376,7 +368,7 @@
   "Display categories where you have spent money"
   (interactive)
 
-  (setq data (ynab--read-data))
+  (setq data ynab--cached-data)
   (let ((spent '()))
     (cl-loop
      for item across (ynab--retrieve-value 'categories data) do
@@ -391,7 +383,7 @@
   "Display categories by their respective category group"
   (interactive)
 
-  (setq data (ynab--read-data))
+  (setq data ynab--cached-data)
 
   (let ((entries-in-category-group '())
         (chosen-category-group
@@ -415,23 +407,10 @@
 
   (if (file-exists-p "ynab-data.lisp")
       (progn
-        (setq data (ynab--read-data))
+        (setq data ynab--cached-data)
         (ynab--init-and-switch-to-budget-buffer
          (ynab--retrieve-value 'categories data)
          (ynab--retrieve-value 'to_be_budgeted data)))
     (ynab-update)))
 
 (global-set-key (kbd "C-x y") 'ynab-budget)
-
-
-
-
-
-
-
-
-
-
-
-
-
