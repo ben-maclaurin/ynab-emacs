@@ -7,7 +7,7 @@
 [[https://github.com/ben-maclaurin/ynab-mode/blob/main/ynab-mode.png][Example screenshot]]
 
 ** Features
-- =ynab-budget (M-x y)= open your YNAB budget for the current month
+- =ynab-budget (C-x y)= open your YNAB budget for the current month
 - =ynab-categories (c)= display categories by their respective category group
 - =ynab-spent (s)= display categories where you have spent money
 - =ynab-available (a)= display all categories where money is available
