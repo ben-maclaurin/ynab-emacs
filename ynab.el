@@ -87,9 +87,9 @@
      :complete
      (cl-function
       (lambda (&key data &allow-other-keys)
-        (setq response (json-read-from-string data))
-        (setq data (assoc 'data response))
-        (setq month (assoc 'month data)))))
+	(let* ((response (json-read-from-string data))
+	       (data (assoc 'data response)))
+	  (setq month (assoc 'month data))))))
     month))
 
 (defvar ynab--month nil
