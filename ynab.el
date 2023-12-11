@@ -407,7 +407,8 @@
   (interactive)
   (let ((choice
          (completing-read
-          "Choose category to assign to" (ynab--category-names))))))
+          "Choose category to assign to" (ynab--category-names)))
+	(amount (completing-read "Set amount" nil)))))
 
 (defun ynab-budget ()
   "Open your YNAB budget for the current month"
