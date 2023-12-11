@@ -3,13 +3,16 @@
 Manage your YNAB budget from Emacs. Requires a [[https://www.ynab.com/pricing][YNAB]] subscription and verified email.
 
 [[file:ynab.png]]
+/theme: [[https://github.com/protesilaos/standard-themes][Standard Dark]], font: [[https://berkeleygraphics.com/typefaces/berkeley-mono/][Berkeley Mono]]/
 
 ** Features
 - =ynab-budget (C-x y)= open your YNAB budget for the current month
+  
+- =ynab-assign (A)= display categories by underfunded  
+- =ynab-available (a)= display all categories where money is available
 - =ynab-categories (c)= display categories by their respective category group
 - =ynab-spent (s)= display categories where you have spent money
-- =ynab-available (a)= display all categories where money is available
-- =ynab-underfunded (u)= display categories by underfunded  
+- =ynab-underfunded (u)= display categories by underfunded
 
 ** Requirements
 - A YNAB subscription
@@ -17,7 +20,6 @@ Manage your YNAB budget from Emacs. Requires a [[https://www.ynab.com/pricing][Y
 - Non-archived YNAB budget  
 
 ** Limitations
-- Currently read-only
 - No transactions view
 - Not availabe on MELPA
 - Only displays current month
