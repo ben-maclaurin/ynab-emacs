@@ -121,7 +121,6 @@
       (setq tabulated-list-format list-format)
       (setq tabulated-list-entries list-entries)
       (tabulated-list-mode)
-      (global-hl-line-mode)
       (tabulated-list-init-header)
       (tabulated-list-print))
     buffer))
