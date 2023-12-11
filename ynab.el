@@ -72,6 +72,23 @@
   :group 'ynab
   :type 'string)
 
+(defun ynab--update-category (category)
+  "Update a category with data"
+
+  (let ((headers (list (cons "Authorization" (format "%s"ynab-api-key)))))
+  (request
+    (concat ynab--endpoint ynab-budget-id "/categories/" (ynabb-assoc-element 'id category)
+	    :headers headers
+	    :sync t
+	    :parse 'json-read
+	    :compelte
+	    (cl-function)
+
+	    ))
+
+  
+  )
+
 (defun ynab--fetch-current-month ()
   "Fetches current month`'s budget data from YNAB API, using `'ynab--api-key`'
    for authorization and returns parsed month information"
@@ -384,6 +401,12 @@
 
     (ynab--init-and-switch-to-budget-buffer
      (vconcat entries-in-category-group) ynab--to-be-budgeted)))
+
+(defun ynab--assign ()
+  "Assign money"
+  ()
+
+  )
 
 (defun ynab-budget ()
   "Open your YNAB budget for the current month"
