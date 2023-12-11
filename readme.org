@@ -8,7 +8,7 @@ Manage your YNAB budget from Emacs. Requires a [[https://www.ynab.com/pricing][Y
 ** Features
 - =ynab-budget (C-x y)= open your YNAB budget for the current month
   
-- =ynab-assign (A)= display categories by underfunded  
+- =ynab-assign (A)= assign money to a category
 - =ynab-available (a)= display all categories where money is available
 - =ynab-categories (c)= display categories by their respective category group
 - =ynab-spent (s)= display categories where you have spent money
