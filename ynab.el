@@ -72,6 +72,7 @@
   :group 'ynab
   :type 'string)
 
+;; TODO make this function generic
 (defun ynab--update-category (budgeted category-id)
   "Update a category with data"
   (let ((headers
