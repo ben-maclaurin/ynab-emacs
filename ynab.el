@@ -118,19 +118,10 @@
 (defun ynab--get-category-groups-from-categories (categories)
   "Collects and returns unique names of category groups
   from `'categories`', excluding any named `'Internal Master Category`'"
-  (let ((category-groups nil))
-    (cl-loop
-     for category across categories do
-     (let ((category-group-name
-            (ynab--get-assoc-element 'category_group_name category)))
-       (if (and (not (member category-group-name category-groups))
-                (not
-                 (string=
-                  category-group-name "Internal Master Category")))
-           (push (ynab--get-assoc-element
-                  'category_group_name category)
-                 category-groups))))
-    category-groups))
+  (mapcar
+   (lambda (arg)
+     (ynab--get-assoc-element 'category_group_name arg))
+   categories))
 
 (defun ynab--init-tabulated-list (list-format list-entries)
   "Creates or gets a buffer named `'YNAB`', sets up and displays a tabulated
@@ -417,7 +408,6 @@
   (let ((choice
          (completing-read
           "Choose category to assign to" (ynab--category-names))))))
-
 
 (defun ynab-budget ()
   "Open your YNAB budget for the current month"
