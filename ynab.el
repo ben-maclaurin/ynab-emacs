@@ -86,7 +86,7 @@
       :sync t
       :type "PATCH"
       :parse 'json-read
-      :compelte
+      :complete
       (cl-function
        (lambda (&key data &allow-other-keys) (print response)))))))
 
@@ -406,9 +406,18 @@
     (ynab--init-and-switch-to-budget-buffer
      (vconcat entries-in-category-group) ynab--to-be-budgeted)))
 
-(defun ynab--assign ()
+(defun ynab--category-names ()
+  (mapcar
+   (lambda (arg) (ynab--get-assoc-element 'name arg))
+   ynab--categories))
+
+(defun ynab-assign ()
   "Assign money"
-  ())
+  (interactive)
+  (let ((choice
+         (completing-read
+          "Choose category to assign to" (ynab--category-names))))))
+
 
 (defun ynab-budget ()
   "Open your YNAB budget for the current month"
