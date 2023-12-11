@@ -396,6 +396,4 @@
          ynab--categories ynab--to-be-budgeted))
     (ynab-update)))
 
-(global-set-key (kbd "C-x y") 'ynab-budget)
-
 (provide 'ynab)

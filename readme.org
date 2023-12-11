@@ -54,8 +54,8 @@ https://app.ynab.com/64dfafd8-500e-4383-8f81-1822475830ec/budget/202312
 
 Open your YNAB budget for the current month.
 
-*** Default keybindings:
-=C-x y=
+*** Example keybindings:
+=(global-set-key (kbd "C-x y") 'ynab-budget)=
 
 ** Alternatives
 - https://github.com/thoreinstein/ynab.el
