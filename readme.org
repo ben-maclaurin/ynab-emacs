@@ -11,6 +11,11 @@
 - =ynab-available (a)= display all categories where money is available
 - =ynab-underfunded (u)= display categories by underfunded  
 
+** Requirements
+- A YNAB subscription
+- Verified email on YNAB
+- Non-archived YNAB budget  
+
 ** Limitations
 - Currently read-only
 - No transactions view
@@ -26,12 +31,8 @@ The package is not available on MELPA so you will need to clone this repository 
 =(setq ynab-api-key "<your api key>")=
 
 Sets your YNAB API key.
-
-Requirements:
-- A YNAB subscription
-- Verified email on YNAB
   
-If the above requirements are met, you may create a new API key from: Account Settings -> Developer Settings -> New Token
+You may create a new API key from: Account Settings -> Developer Settings -> New Token
 
 You can also visit: https://app.ynab.com/settings/developer
 
@@ -39,9 +40,6 @@ You can also visit: https://app.ynab.com/settings/developer
 =(setq ynab-budget-id "<your budget id>")=
 
 Sets your YNAB budget ID.
-
-Requirements:
-- A valid YNAB budget
 
 You can quickly find your budget ID from the URL of your budget view. e.g. given the following URL:
 
@@ -67,5 +65,11 @@ You Need a Budget (YNAB) (pronounced /ˈwaɪnæb/) is an American multi-platform
 #+END_QUOTE
 
 Quote from [[https://en.wikipedia.org/wiki/YNAB][Wikipedia]] | [[https://www.ynab.com][YNAB Website]]
+
+
+
+
+
+
 
 
