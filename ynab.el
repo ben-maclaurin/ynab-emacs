@@ -74,34 +74,24 @@
 
 (defun ynab--update-category (budgeted category-id)
   "Update a category with data"
-  (print
-   (concat ynab--endpoint ynab-budget-id "categories/" category-id))
-
   (let ((headers
          (list
           (cons
            "Authorization" (format "Bearer %s" ynab-api-key))
           (cons "Content-Type" "application/json"))))
     (request
-     (concat ynab--endpoint ynab-budget-id "months/2023-12-11/categories/" category-id)
+     (concat
+      ynab--endpoint
+      ynab-budget-id
+      "months/2023-12-11/categories/"
+      category-id)
      :headers headers
      :sync t
      :type "PATCH"
      :data
      (json-encode
-      (list
-       (cons
-        "category"
-        (list (cons "budgeted" budgeted)))))
-     :parser 'json-read
-     :error
-     (cl-function
-      (lambda (&rest args &key error-thrown &allow-other-keys)
-        (message "Got error: %S" error-thrown)))
-     :success
-     (cl-function
-      (lambda (&key data &allow-other-keys)
-        (message "I sent: %S" (assoc-default 'json data)))))))
+      (list (cons "category" (list (cons "budgeted" budgeted)))))
+     :parser 'json-read)))
 
 (defun ynab--fetch-current-month ()
   "Fetches current month`'s budget data from YNAB API, using `'ynab--api-key`'
@@ -305,6 +295,7 @@
     (define-key map (kbd "c") 'ynab-categories)
     (define-key map (kbd "u") 'ynab-underfunded)
     (define-key map (kbd "s") 'ynab-spent)
+    (define-key map (kbd "A") 'ynab-assign)
     (define-key map (kbd "a") 'ynab-available)
     map)
   "Defines the YNAB mode map for ergonomic calling of functions from the budget view")
@@ -319,6 +310,15 @@
           (ynab--init-budget-entries budget-data to-be-budgeted))))
     (switch-to-buffer buffer)
     (ynab-mode)))
+
+(defun ynab--category-names-and-ids ()
+  (mapcar
+   (lambda (arg)
+     (list
+      (ynab--get-assoc-element 'name arg)
+      (ynab--get-assoc-element 'id arg)))
+   ynab--categories))
+
 
 (define-minor-mode ynab-mode
   "Defines the YNAB minor mode"
@@ -410,28 +410,21 @@
     (ynab--init-and-switch-to-budget-buffer
      (vconcat entries-in-category-group) ynab--to-be-budgeted)))
 
-(defun ynab--category-names-and-ids ()
-  (mapcar
-   (lambda (arg)
-     (list
-      (ynab--get-assoc-element 'name arg)
-      (ynab--get-assoc-element 'id arg)))
-   ynab--categories))
-
 (defun ynab-assign ()
   "Assign money"
   (interactive)
 
-  (setq category-names-and-ids (ynab--category-names-and-ids))
-
-  (let* ((categories)
+  (let* ((category-names-and-ids (ynab--category-names-and-ids))
+         (categories)
          (choice
           (completing-read
            "Choose category to assign to: "
            (mapcar (lambda (arg) (car arg)) category-names-and-ids)))
          (amount (completing-read "Set amount: " nil)))
     (ynab--update-category
-     (* (string-to-number amount) 1000) (cadr (assoc choice category-names-and-ids)))))
+     (* (string-to-number amount) 1000)
+     (cadr (assoc choice category-names-and-ids))))
+  (ynab-update))
 
 (defun ynab-budget ()
   "Open your YNAB budget for the current month"
