@@ -84,7 +84,7 @@
      (concat
       ynab--endpoint
       ynab-budget-id
-      "months/2023-12-11/categories/"
+      "/months/2023-12-11/categories/"
       category-id)
      :headers headers
      :sync t
@@ -317,6 +317,7 @@
    (lambda (arg)
      (list
       (ynab--get-assoc-element 'name arg)
+      (ynab--get-assoc-element 'budgeted arg)
       (ynab--get-assoc-element 'id arg)))
    ynab--categories))
 
@@ -423,8 +424,8 @@
            (mapcar (lambda (arg) (car arg)) category-names-and-ids)))
          (amount (completing-read "Set amount: " nil)))
     (ynab--update-category
-     (* (string-to-number amount) 1000)
-     (cadr (assoc choice category-names-and-ids))))
+     (+ (* (string-to-number amount) 1000) (cadr (assoc choice category-names-and-ids)))
+     (nth 2 (assoc choice category-names-and-ids))))
   (ynab-update))
 
 (defun ynab-budget ()
@@ -438,3 +439,8 @@
     (ynab-update)))
 
 (provide 'ynab)
+
+
+
+
+
