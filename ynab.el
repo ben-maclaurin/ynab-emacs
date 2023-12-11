@@ -84,6 +84,7 @@
       (ynabb-assoc-element 'id category)
       :headers headers
       :sync t
+      :type "PATCH"
       :parse 'json-read
       :compelte
       (cl-function
