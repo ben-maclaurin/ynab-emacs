@@ -74,20 +74,20 @@
 
 (defun ynab--update-category (category)
   "Update a category with data"
-
-  (let ((headers (list (cons "Authorization" (format "%s"ynab-api-key)))))
-  (request
-    (concat ynab--endpoint ynab-budget-id "/categories/" (ynabb-assoc-element 'id category)
-	    :headers headers
-	    :sync t
-	    :parse 'json-read
-	    :compelte
-	    (cl-function)
-
-	    ))
-
-  
-  )
+  (let ((headers
+         (list (cons "Authorization" (format "%s" ynab-api-key)))))
+    (request
+     (concat
+      ynab--endpoint
+      ynab-budget-id
+      "/categories/"
+      (ynabb-assoc-element 'id category)
+      :headers headers
+      :sync t
+      :parse 'json-read
+      :compelte
+      (cl-function
+       (lambda (&key data &allow-other-keys) (print response)))))))
 
 (defun ynab--fetch-current-month ()
   "Fetches current month`'s budget data from YNAB API, using `'ynab--api-key`'
@@ -126,7 +126,8 @@
                 (not
                  (string=
                   category-group-name "Internal Master Category")))
-           (push (ynab--get-assoc-element 'category_group_name category)
+           (push (ynab--get-assoc-element
+                  'category_group_name category)
                  category-groups))))
     category-groups))
 
@@ -354,7 +355,8 @@
   (interactive)
 
   (let ((available
-         (ynab--filter-by-non-zero-element 'balance ynab--categories)))
+         (ynab--filter-by-non-zero-element
+          'balance ynab--categories)))
     (ynab--init-and-switch-to-budget-buffer
      (vconcat available) ynab--to-be-budgeted)))
 
@@ -395,7 +397,8 @@
     (cl-loop
      for element across ynab--categories do
      (if (string=
-          (ynab--get-assoc-element 'category_group_name element)
+          (ynab--get-assoc-element
+           'category_group_name element)
           chosen-category-group)
          (push element entries-in-category-group)))
 
@@ -404,9 +407,7 @@
 
 (defun ynab--assign ()
   "Assign money"
-  ()
-
-  )
+  ())
 
 (defun ynab-budget ()
   "Open your YNAB budget for the current month"
