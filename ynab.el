@@ -72,6 +72,37 @@
   :group 'ynab
   :type 'string)
 
+(defun ynab--update-category (budgeted category-id)
+  "Update a category with data"
+  (print
+   (concat ynab--endpoint ynab-budget-id "categories/" category-id))
+
+  (let ((headers
+         (list
+          (cons
+           "Authorization" (format "Bearer %s" ynab-api-key))
+          (cons "Content-Type" "application/json"))))
+    (request
+     (concat ynab--endpoint ynab-budget-id "months/2023-12-11/categories/" category-id)
+     :headers headers
+     :sync t
+     :type "PATCH"
+     :data
+     (json-encode
+      (list
+       (cons
+        "category"
+        (list (cons "budgeted" budgeted)))))
+     :parser 'json-read
+     :error
+     (cl-function
+      (lambda (&rest args &key error-thrown &allow-other-keys)
+        (message "Got error: %S" error-thrown)))
+     :success
+     (cl-function
+      (lambda (&key data &allow-other-keys)
+        (message "I sent: %S" (assoc-default 'json data)))))))
+
 (defun ynab--fetch-current-month ()
   "Fetches current month`'s budget data from YNAB API, using `'ynab--api-key`'
    for authorization and returns parsed month information"
@@ -100,18 +131,10 @@
 (defun ynab--get-category-groups-from-categories (categories)
   "Collects and returns unique names of category groups
   from `'categories`', excluding any named `'Internal Master Category`'"
-  (let ((category-groups nil))
-    (cl-loop
-     for category across categories do
-     (let ((category-group-name
-            (ynab--get-assoc-element 'category_group_name category)))
-       (if (and (not (member category-group-name category-groups))
-                (not
-                 (string=
-                  category-group-name "Internal Master Category")))
-           (push (ynab--get-assoc-element 'category_group_name category)
-                 category-groups))))
-    category-groups))
+  (mapcar
+   (lambda (arg)
+     (ynab--get-assoc-element 'category_group_name arg))
+   categories))
 
 (defun ynab--init-tabulated-list (list-format list-entries)
   "Creates or gets a buffer named `'YNAB`', sets up and displays a tabulated
@@ -268,7 +291,7 @@
   "Formats `'value`' as a string representing a monetary amount in pounds,
    converting from a thousandth of a pound to pounds with two decimal places.
    Conversion is because YNAB returns values in thousandths"
-  (format "£%.2f" (/ (float value) 1000)))
+  (format "%.2f" (/ (float value) 1000)))
 
 (defun ynab--get-assoc-element (key alist)
   "Retrieves the value associated with `'key`'
@@ -337,7 +360,8 @@
   (interactive)
 
   (let ((available
-         (ynab--filter-by-non-zero-element 'balance ynab--categories)))
+         (ynab--filter-by-non-zero-element
+          'balance ynab--categories)))
     (ynab--init-and-switch-to-budget-buffer
      (vconcat available) ynab--to-be-budgeted)))
 
@@ -371,19 +395,43 @@
   (let ((entries-in-category-group '())
         (chosen-category-group
          (completing-read
-          "Category Groups"
+          "Category Groups: "
           (ynab--get-category-groups-from-categories
            ynab--categories))))
 
     (cl-loop
      for element across ynab--categories do
      (if (string=
-          (ynab--get-assoc-element 'category_group_name element)
+          (ynab--get-assoc-element
+           'category_group_name element)
           chosen-category-group)
          (push element entries-in-category-group)))
 
     (ynab--init-and-switch-to-budget-buffer
      (vconcat entries-in-category-group) ynab--to-be-budgeted)))
+
+(defun ynab--category-names-and-ids ()
+  (mapcar
+   (lambda (arg)
+     (list
+      (ynab--get-assoc-element 'name arg)
+      (ynab--get-assoc-element 'id arg)))
+   ynab--categories))
+
+(defun ynab-assign ()
+  "Assign money"
+  (interactive)
+
+  (setq category-names-and-ids (ynab--category-names-and-ids))
+
+  (let* ((categories)
+         (choice
+          (completing-read
+           "Choose category to assign to: "
+           (mapcar (lambda (arg) (car arg)) category-names-and-ids)))
+         (amount (completing-read "Set amount: " nil)))
+    (ynab--update-category
+     (* (string-to-number amount) 1000) (cadr (assoc choice category-names-and-ids)))))
 
 (defun ynab-budget ()
   "Open your YNAB budget for the current month"
