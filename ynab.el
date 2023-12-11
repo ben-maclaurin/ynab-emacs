@@ -87,9 +87,9 @@
      :complete
      (cl-function
       (lambda (&key data &allow-other-keys)
-	(let* ((response (json-read-from-string data))
-	       (data (assoc 'data response)))
-	  (setq month (assoc 'month data))))))
+        (let* ((response (json-read-from-string data))
+               (data (assoc 'data response)))
+          (setq month (assoc 'month data))))))
     (cdr month)))
 
 (defvar ynab--month nil)
@@ -162,14 +162,34 @@
                                   'diff-removed)))))
     message))
 
+(defun ynab--totalise-columns-for-list (list)
+  (list
+   "Total"
+   (vector
+    (format "%s" (propertize "Total" 'face 'bold))
+    (format "%s"
+            (propertize (ynab--format-value-as-money
+                         (ynab--calculate-sum-for-value
+                          'budgeted list))
+                        'face 'bold))
+    (format "%s"
+            (propertize (ynab--format-value-as-money
+                         (ynab--calculate-sum-for-value
+                          'activity list))
+                        'face 'bold))
+    (format "%s"
+            (propertize (ynab--format-value-as-money
+                         (ynab--calculate-sum-for-value
+                          'balance list))
+                        'face 'bold)))))
+
 ;; TODO handle exclusion of category before printing data to ynab-data.lisp
 (defun ynab--init-budget-entries (categories to-be-budgeted)
   "Creates a list of entries for a tabulated list display from `'categories`'.
    It includes special entries for `'To be budgeted`' and `'Total`' with formatted
    values and adds each category, excluding `'Inflow: Ready to Assign`', with formatted
    budget, activity, and balance values. Returns the list of entries."
-  (let ((categories-list categories)
-        (entries '()))
+  (let ((entries '()))
 
     (push (list
            "To be budgeted"
@@ -180,49 +200,32 @@
             (format "%s" "") (format "%s" "")))
           entries)
 
-    (push (list
-           "Total"
-           (vector
-            (format "%s" (propertize "Total" 'face 'bold))
-            (format "%s"
-                    (propertize (ynab--format-value-as-money
-                                 (ynab--calculate-sum-for-value
-                                  'budgeted categories-list))
-                                'face 'bold))
-            (format "%s"
-                    (propertize (ynab--format-value-as-money
-                                 (ynab--calculate-sum-for-value
-                                  'activity categories-list))
-                                'face 'bold))
-            (format "%s"
-                    (propertize (ynab--format-value-as-money
-                                 (ynab--calculate-sum-for-value
-                                  'balance categories-list))
-                                'face 'bold))))
-          entries)
+    (push (ynab--totalise-columns-for-list categories) entries)
 
     (cl-loop
-     for element across categories-list do
+     for element across categories do
      (if (not
           (string=
            (ynab--get-assoc-value 'name element)
            "Inflow: Ready to Assign"))
          (push (list
                 (format "%s"
-                        (propertize (ynab--get-assoc-value 'id element)
+                        (propertize (ynab--get-assoc-value
+                                     'id element)
                                     'face 'link))
                 (vector
                  (format "%s"
-                         (propertize (ynab--get-assoc-value
-                                      'name element)
-                                     'face 'link))
+                         (propertize
+                          (ynab--get-assoc-value 'name element)
+                          'face 'link))
                  (ynab--format-value-as-money
                   (ynab--get-assoc-value 'budgeted element))
                  (ynab--format-value-as-money
                   (ynab--get-assoc-value 'activity element))
                  (ynab--format-balance
                   (ynab--get-assoc-value 'balance element)
-                  (ynab--get-assoc-value 'goal_under_funded element))))
+                  (ynab--get-assoc-value
+                   'goal_under_funded element))))
                entries)))
     entries))
 
@@ -300,6 +303,15 @@
   :lighter " YNAB"
   :keymap ynab--mode-map)
 
+(defun ynab--filter-by-non-zero-element (element list)
+  (let ((non-zero-elements '()))
+    (cl-loop
+     for e across list do
+     (if (ynab--get-assoc-value element e)
+         (if (> (ynab--get-assoc-value element e) 0)
+             (push e non-zero-elements))))
+    non-zero-elements))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                                              ;;
 ;;      Interactive functions start here        ;;
@@ -310,8 +322,7 @@
   "Synchronously pull data from YNAB. Blocking action"
   (interactive)
 
-  (if (and (> (length ynab-api-key) 0)
-           (> (length ynab-budget-id) 0))
+  (if (and (> (length ynab-api-key) 0) (> (length ynab-budget-id) 0))
       (progn
         (setq ynab--month (ynab--fetch-current-month))
         (setq ynab--categories
@@ -331,12 +342,8 @@
   "Display all categories where money is available"
   (interactive)
 
-  (let ((available '()))
-    (cl-loop
-     for element across ynab--categories do
-     (if (> (ynab--get-assoc-value 'balance element) 0)
-         (push element available)))
-
+  (let ((available
+         (ynab--filter-by-non-zero-element 'balance ynab--categories)))
     (ynab--init-and-switch-to-budget-buffer
      (vconcat available) ynab--to-be-budgeted)))
 
@@ -344,13 +351,9 @@
   "Display categories by underfunded"
   (interactive)
 
-  (let ((underfunded '()))
-    (cl-loop
-     for item across ynab--categories do
-     (if (ynab--get-assoc-value 'goal_under_funded item)
-         (if (> (ynab--get-assoc-value 'goal_under_funded item) 0)
-             (push item underfunded))))
-
+  (let ((underfunded
+         (ynab--filter-by-non-zero-element
+          'goal_under_funded ynab--categories)))
     (ynab--init-and-switch-to-budget-buffer
      (vconcat underfunded) ynab--to-be-budgeted)))
 
@@ -360,11 +363,10 @@
 
   (let ((spent '()))
     (cl-loop
-     for item across ynab--categories do
-     (if (ynab--get-assoc-value 'activity item)
-         (if (> 0 (ynab--get-assoc-value 'activity item))
-             (push item spent))))
-
+     for element across ynab--categories do
+     (if (ynab--get-assoc-value 'activity element)
+         (if (> 0 (ynab--get-assoc-value 'activity element))
+             (push element spent))))
     (ynab--init-and-switch-to-budget-buffer
      (vconcat spent) ynab--to-be-budgeted)))
 
@@ -378,12 +380,14 @@
           "Category Groups"
           (ynab--get-category-groups-from-categories
            ynab--categories))))
+
     (cl-loop
-     for item across ynab--categories do
+     for element across ynab--categories do
      (if (string=
-          (ynab--get-assoc-value 'category_group_name item)
+          (ynab--get-assoc-value 'category_group_name element)
           chosen-category-group)
-         (push item entries-in-category-group)))
+         (push element entries-in-category-group)))
+
     (ynab--init-and-switch-to-budget-buffer
      (vconcat entries-in-category-group) ynab--to-be-budgeted)))
 
