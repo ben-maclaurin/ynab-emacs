@@ -104,12 +104,12 @@
     (cl-loop
      for category across categories do
      (let ((category-group-name
-            (ynab--get-assoc-value 'category_group_name category)))
+            (ynab--get-assoc-element 'category_group_name category)))
        (if (and (not (member category-group-name category-groups))
                 (not
                  (string=
                   category-group-name "Internal Master Category")))
-           (push (ynab--get-assoc-value 'category_group_name category)
+           (push (ynab--get-assoc-element 'category_group_name category)
                  category-groups))))
     category-groups))
 
@@ -136,9 +136,9 @@
      for category across categories do
      (if (not
           (string=
-           (ynab--get-assoc-value 'name category)
+           (ynab--get-assoc-element 'name category)
            "Inflow: Ready to Assign"))
-         (setq sum (+ sum (ynab--get-assoc-value value category)))))
+         (setq sum (+ sum (ynab--get-assoc-element value category)))))
     sum))
 
 (defun ynab--display-to-be-budgeted-message (to-be-budgeted)
@@ -206,25 +206,25 @@
      for element across categories do
      (if (not
           (string=
-           (ynab--get-assoc-value 'name element)
+           (ynab--get-assoc-element 'name element)
            "Inflow: Ready to Assign"))
          (push (list
                 (format "%s"
-                        (propertize (ynab--get-assoc-value
+                        (propertize (ynab--get-assoc-element
                                      'id element)
                                     'face 'link))
                 (vector
                  (format "%s"
                          (propertize
-                          (ynab--get-assoc-value 'name element)
+                          (ynab--get-assoc-element 'name element)
                           'face 'link))
                  (ynab--format-value-as-money
-                  (ynab--get-assoc-value 'budgeted element))
+                  (ynab--get-assoc-element 'budgeted element))
                  (ynab--format-value-as-money
-                  (ynab--get-assoc-value 'activity element))
+                  (ynab--get-assoc-element 'activity element))
                  (ynab--format-balance
-                  (ynab--get-assoc-value 'balance element)
-                  (ynab--get-assoc-value
+                  (ynab--get-assoc-element 'balance element)
+                  (ynab--get-assoc-element
                    'goal_under_funded element))))
                entries)))
     entries))
@@ -271,7 +271,7 @@
    Conversion is because YNAB returns values in thousandths"
   (format "£%.2f" (/ (float value) 1000)))
 
-(defun ynab--get-assoc-value (key alist)
+(defun ynab--get-assoc-element (key alist)
   "Retrieves the value associated with `'key`'
    in an association list `'list`'"
   (cdr (assoc key alist)))
@@ -307,16 +307,11 @@
   (let ((non-zero-elements '()))
     (cl-loop
      for e across list do
-     (if (ynab--get-assoc-value element e)
-         (if (> (ynab--get-assoc-value element e) 0)
+     (if (ynab--get-assoc-element element e)
+         (if (> (ynab--get-assoc-element element e) 0)
              (push e non-zero-elements))))
     non-zero-elements))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                                              ;;
-;;      Interactive functions start here        ;;
-;;                                              ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun ynab-update ()
   "Synchronously pull data from YNAB. Blocking action"
@@ -326,9 +321,9 @@
       (progn
         (setq ynab--month (ynab--fetch-current-month))
         (setq ynab--categories
-              (ynab--get-assoc-value 'categories ynab--month))
+              (ynab--get-assoc-element 'categories ynab--month))
         (setq ynab--to-be-budgeted
-              (ynab--get-assoc-value 'to_be_budgeted ynab--month))
+              (ynab--get-assoc-element 'to_be_budgeted ynab--month))
         (ignore-errors
           kill-buffer
           "YNAB")
@@ -364,8 +359,8 @@
   (let ((spent '()))
     (cl-loop
      for element across ynab--categories do
-     (if (ynab--get-assoc-value 'activity element)
-         (if (> 0 (ynab--get-assoc-value 'activity element))
+     (if (ynab--get-assoc-element 'activity element)
+         (if (> 0 (ynab--get-assoc-element 'activity element))
              (push element spent))))
     (ynab--init-and-switch-to-budget-buffer
      (vconcat spent) ynab--to-be-budgeted)))
@@ -384,7 +379,7 @@
     (cl-loop
      for element across ynab--categories do
      (if (string=
-          (ynab--get-assoc-value 'category_group_name element)
+          (ynab--get-assoc-element 'category_group_name element)
           chosen-category-group)
          (push element entries-in-category-group)))
 
