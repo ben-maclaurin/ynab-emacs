@@ -92,8 +92,7 @@
 	  (setq month (assoc 'month data))))))
     month))
 
-(defvar ynab--month nil
-  "Store YNAB data to avoid superfluous file reading or API requests")
+(defvar ynab--month nil)
 (defvar ynab--categories nil)
 (defvar ynab--to-be-budgeted nil)
 
@@ -399,3 +398,9 @@
     (ynab-update)))
 
 (global-set-key (kbd "C-x y") 'ynab-budget)
+
+
+
+
+
+
