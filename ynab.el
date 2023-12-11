@@ -399,8 +399,4 @@
 
 (global-set-key (kbd "C-x y") 'ynab-budget)
 
-
-
-
-
-
+(provide 'ynab)
