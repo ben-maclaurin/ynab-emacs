@@ -3,11 +3,9 @@
 
 #+html: <img src="https://raw.githubusercontent.com/ben-maclaurin/ynab-emacs/main/dalle.png" align="right" width="40%" />
 
-
 Manage your YNAB budget from Emacs. Requires a [[https://www.ynab.com/pricing][YNAB]] subscription and verified email.
 
-[[file:ynab.png]]
-/theme: [[https://github.com/protesilaos/standard-themes][Standard Dark]], font: [[https://berkeleygraphics.com/typefaces/berkeley-mono/][Berkeley Mono]]/
+[[https://github.com/ben-maclaurin/ynab-emacs/blob/main/ynab.png][Example screenshot]]
 
 ** Features
 - =ynab-budget (C-x y)= open your YNAB budget for the current month
