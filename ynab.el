@@ -31,6 +31,8 @@
 ;; Manage your YNAB budget in Emacs.
 ;; Requires a [[https://www.ynab.com/pricing][YNAB]] subscription and verified email.
 
+(require 'cl)
+
 (defconst ynab--budget-list-format
   [("Category" 60 t)
    ("Assigned" 30 t)
@@ -412,6 +414,7 @@
     (ynab--init-and-switch-to-budget-buffer
      (vconcat entries-in-category-group) ynab--to-be-budgeted)))
 
+;; TODO make this work with floats
 (defun ynab-assign ()
   "Assign money"
   (interactive)
@@ -424,9 +427,27 @@
            (mapcar (lambda (arg) (car arg)) category-names-and-ids)))
          (amount (completing-read "Set amount: " nil)))
     (ynab--update-category
-     (+ (* (string-to-number amount) 1000) (cadr (assoc choice category-names-and-ids)))
+     (+ (* (string-to-number amount) 1000)
+        (cadr (assoc choice category-names-and-ids)))
      (nth 2 (assoc choice category-names-and-ids))))
   (ynab-update))
+
+(defun ynab-search ()
+  "Search through categories and select one for view"
+  (interactive)
+  (let ((choice
+         (completing-read
+          "Search: "
+          (mapcar
+           (lambda (arg)
+             (ynab--get-assoc-element 'name arg))
+           ynab--categories))))
+
+    (let ((category
+           (-filter
+            (lambda (x)
+              (string= (cadr (assoc 'name x)) choice))
+            ynab--categories))))))
 
 (defun ynab-budget ()
   "Open your YNAB budget for the current month"
@@ -439,8 +460,3 @@
     (ynab-update)))
 
 (provide 'ynab)
-
-
-
-
-

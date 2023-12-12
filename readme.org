@@ -1,5 +1,6 @@
 * ynab-emacs
 
+
 Manage your YNAB budget from Emacs. Requires a [[https://www.ynab.com/pricing][YNAB]] subscription and verified email.
 
 [[file:ynab.png]]
