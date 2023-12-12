@@ -3,13 +3,13 @@
 
 #+html: <img src="https://raw.githubusercontent.com/ben-maclaurin/ynab-emacs/main/dalle.png" align="right" width="40%" />
 
-Manage your YNAB budget from Emacs. Requires a [[https://www.ynab.com/pricing][YNAB]] subscription and verified email.
+A convenient Emacs package to manage your [[https://www.ynab.com/][YNAB]] personal or
+professional budgets. This package requires a YNAB subscription.
 
 [[https://github.com/ben-maclaurin/ynab-emacs/blob/main/ynab.png][Example screenshot]]
 
 ** Features
-- =ynab-budget (C-x y)= open your YNAB budget for the current month
-  
+- =M-x ynab-budget= open your YNAB budget for the current month
 - =ynab-assign (A)= assign money to a category
 - =ynab-available (a)= display all categories where money is available
 - =ynab-categories (c)= display categories by their respective category group
@@ -26,10 +26,10 @@ Manage your YNAB budget from Emacs. Requires a [[https://www.ynab.com/pricing][Y
 - Not availabe on MELPA
 - Only displays current month
 
-Planning to resolve these in a future update.
+Planning to resolve the above in a future update.
 
 ** Installation
-The package is not available on MELPA so you will need to clone this repository and evaluate manually.
+This package is not available on MELPA. You will need to clone and evaluate manually.
 
 *** Setting your key
 =(setq ynab-api-key "<your api key>")=
@@ -45,11 +45,11 @@ You can also visit: https://app.ynab.com/settings/developer
 
 Sets your YNAB budget ID.
 
-You can quickly find your budget ID from the URL of your budget view. e.g. given the following URL:
+Find your budget ID from the URL of your budget view. e.g. given the following URL:
 
-https://app.ynab.com/64dfafd8-500e-4383-8f81-1822475830ec/budget/202312
+=https://app.ynab.com/64dfafd8-500e-4383-8f81-1822475830ec/budget/202312=
 
-..your budget ID would be: 64dfafd8-500e-4383-8f81-1822475830ec
+...:the ID is: =64dfafd8-500e-4383-8f81-1822475830ec=
 
 ** Example usage
 =M-x ynab-budget=
