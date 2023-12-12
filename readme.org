@@ -3,7 +3,7 @@
 #+html: <a href="https://www.gnu.org/software/emacs/"><img alt="GNU Emacs" src="https://github.com/minad/corfu/blob/screenshots/emacs.svg?raw=true"/></a>
 #+html: <img src="https://raw.githubusercontent.com/ben-maclaurin/ynab-emacs/main/dalle.png" align="right" width="40%" />
 
-A convenient Emacs package to manage your [[https://www.ynab.com/][YNAB]] personal or
+A convenient Emacs package to manage your [[https://www.ynab.com/][YNAB]] (You Need A Budget) personal or
 professional budgets. This package requires a YNAB subscription.
 
 [[https://github.com/ben-maclaurin/ynab-emacs/blob/main/ynab.png][Example screenshot]]
