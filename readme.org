@@ -1,6 +1,9 @@
 * ynab-emacs
 
 
+<img src="https://raw.githubusercontent.com/ben-maclaurin/ynab-emacs/main/dalle.png" align="right" />
+
+
 Manage your YNAB budget from Emacs. Requires a [[https://www.ynab.com/pricing][YNAB]] subscription and verified email.
 
 [[file:ynab.png]]
