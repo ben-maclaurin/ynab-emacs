@@ -412,6 +412,7 @@
     (ynab--init-and-switch-to-budget-buffer
      (vconcat entries-in-category-group) ynab--to-be-budgeted)))
 
+;; TODO assign based on line under point
 (defun ynab-assign ()
   "Assign money"
   (interactive)
