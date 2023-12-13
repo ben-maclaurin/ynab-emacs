@@ -31,8 +31,6 @@
 ;; Manage your YNAB budget in Emacs.
 ;; Requires a [[https://www.ynab.com/pricing][YNAB]] subscription and verified email.
 
-(require 'cl)
-
 (defconst ynab--budget-list-format
   [("Category" 60 t)
    ("Assigned" 30 t)
