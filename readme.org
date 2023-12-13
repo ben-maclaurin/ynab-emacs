@@ -16,6 +16,8 @@ professional budgets. This package requires a YNAB subscription.
 - =ynab-spent (s)= display categories where you have spent money
 - =ynab-underfunded (u)= display categories by underfunded
 
+  =ynab-assign= accepts negative and FP values (e.g. =ynab-assign -2.99=).
+
 ** Requirements
 - A YNAB subscription
 - Verified email on YNAB
