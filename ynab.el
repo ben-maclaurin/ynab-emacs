@@ -353,6 +353,7 @@
           (princ
            "You must set your budget ID and API key. Please see: \n\nC-h v ynab-set-budget-id \n\nC-h v ynab-set-api-key"))))))
 
+;; TODO mapcar
 (defun ynab-available ()
   "Display all categories where money is available"
   (interactive)
@@ -363,6 +364,7 @@
     (ynab--init-and-switch-to-budget-buffer
      (vconcat available) ynab--to-be-budgeted)))
 
+;; TODO mapcar
 (defun ynab-underfunded ()
   "Display categories by underfunded"
   (interactive)
@@ -373,6 +375,7 @@
     (ynab--init-and-switch-to-budget-buffer
      (vconcat underfunded) ynab--to-be-budgeted)))
 
+;; TODO mapcar
 (defun ynab-spent ()
   "Display categories where you have spent money"
   (interactive)
@@ -386,6 +389,7 @@
     (ynab--init-and-switch-to-budget-buffer
      (vconcat spent) ynab--to-be-budgeted)))
 
+;; TODO mapcar
 (defun ynab-categories ()
   "Display categories by their respective category group"
   (interactive)
