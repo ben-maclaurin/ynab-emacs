@@ -74,6 +74,7 @@
 
 ;; TODO make this function generic
 (defun ynab--update-category (budgeted category-id)
+  (print budgeted)
   "Update a category with data"
   (let ((headers
          (list
@@ -312,16 +313,6 @@
     (switch-to-buffer buffer)
     (ynab-mode)))
 
-(defun ynab--category-names-and-ids ()
-  (mapcar
-   (lambda (arg)
-     (list
-      (ynab--get-assoc-element 'name arg)
-      (ynab--get-assoc-element 'budgeted arg)
-      (ynab--get-assoc-element 'id arg)))
-   ynab--categories))
-
-
 (define-minor-mode ynab-mode
   "Defines the YNAB minor mode"
   :lighter " YNAB"
@@ -412,22 +403,30 @@
     (ynab--init-and-switch-to-budget-buffer
      (vconcat entries-in-category-group) ynab--to-be-budgeted)))
 
-;; TODO make this work with floats
 (defun ynab-assign ()
   "Assign money"
   (interactive)
 
-  (let* ((category-names-and-ids (ynab--category-names-and-ids))
+  (let* ((category-names-and-ids
+          (mapcar
+           (lambda (arg)
+             (list
+              (ynab--get-assoc-element 'name arg)
+              (ynab--get-assoc-element 'budgeted arg)
+              (ynab--get-assoc-element 'id arg)))
+           ynab--categories))
          (categories)
          (choice
           (completing-read
            "Choose category to assign to: "
            (mapcar (lambda (arg) (car arg)) category-names-and-ids)))
          (amount (completing-read "Set amount: " nil)))
-    (ynab--update-category
-     (+ (* (string-to-number amount) 1000)
-        (cadr (assoc choice category-names-and-ids)))
-     (nth 2 (assoc choice category-names-and-ids))))
+
+    (let ((server-amount (cadr (assoc choice category-names-and-ids)))
+          (local-amount (round (* (string-to-number amount) 1000))))
+      (ynab--update-category
+       (+ server-amount local-amount)
+       (nth 2 (assoc choice category-names-and-ids)))))
   (ynab-update))
 
 (defun ynab-search ()
