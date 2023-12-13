@@ -427,9 +427,9 @@
          (categories)
          (choice
           (completing-read
-           "Choose category to assign to: "
+           "Choose a category to assign to: "
            (mapcar (lambda (category) (car category)) category-identifiers-and-budgets)))
-         (amount (completing-read "Set amount: " nil)))
+         (amount (completing-read "Assign amount (e.g.: -2.99): " nil)))
 
     (let ((existing-category-amount
            (cadr (assoc choice category-names-and-ids)))
