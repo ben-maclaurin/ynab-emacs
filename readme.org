@@ -17,7 +17,7 @@ professional budgets. This package requires a YNAB subscription.
 - =ynab-underfunded (u)= display categories by underfunded
  
 *** Assigning money   
-  =ynab-assign= accepts negative and FP values (e.g. =ynab-assign -2.99=).
+  =ynab-assign= accepts negative and FP values (e.g. =2.99=).
 
 ** Requirements
 - A YNAB subscription
