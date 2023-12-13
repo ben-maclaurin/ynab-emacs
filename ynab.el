@@ -74,7 +74,6 @@
 
 ;; TODO make this function generic
 (defun ynab--update-category (budgeted category-id)
-  (print budgeted)
   "Update a category with data"
   (let ((headers
          (list
@@ -422,10 +421,10 @@
            (mapcar (lambda (arg) (car arg)) category-names-and-ids)))
          (amount (completing-read "Set amount: " nil)))
 
-    (let ((server-amount (cadr (assoc choice category-names-and-ids)))
-          (local-amount (round (* (string-to-number amount) 1000))))
+    (let ((existing-category-amount (cadr (assoc choice category-names-and-ids)))
+          (user-provided-amount (round (* (string-to-number amount) 1000))))
       (ynab--update-category
-       (+ server-amount local-amount)
+       (+ existing-category-amount user-provided-amount)
        (nth 2 (assoc choice category-names-and-ids)))))
   (ynab-update))
 
