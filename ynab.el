@@ -331,21 +331,24 @@
   "Synchronously pull data from YNAB. Blocking action"
   (interactive)
 
-  (if (and (> (length ynab-api-key) 0) (> (length ynab-budget-id) 0))
+  (let ((current-line (line-number-at-pos)))
+    (if (and (> (length ynab-api-key) 0)
+             (> (length ynab-budget-id) 0))
+        (progn
+          (setq ynab--month (ynab--fetch-current-month))
+          (setq ynab--categories
+                (ynab--get-assoc-element 'categories ynab--month))
+          (setq ynab--to-be-budgeted
+                (ynab--get-assoc-element 'to_be_budgeted ynab--month))
+          (ignore-errors
+            kill-buffer
+            "YNAB")
+          (ynab-budget)
+          (goto-line current-line))
       (progn
-        (setq ynab--month (ynab--fetch-current-month))
-        (setq ynab--categories
-              (ynab--get-assoc-element 'categories ynab--month))
-        (setq ynab--to-be-budgeted
-              (ynab--get-assoc-element 'to_be_budgeted ynab--month))
-        (ignore-errors
-          kill-buffer
-          "YNAB")
-        (ynab-budget))
-    (progn
-      (with-output-to-temp-buffer "*YNAB ERROR*"
-        (princ
-         "You must set your budget ID and API key. Please see: \n\nC-h v ynab-set-budget-id \n\nC-h v ynab-set-api-key")))))
+        (with-output-to-temp-buffer "*YNAB ERROR*"
+          (princ
+           "You must set your budget ID and API key. Please see: \n\nC-h v ynab-set-budget-id \n\nC-h v ynab-set-api-key"))))))
 
 (defun ynab-available ()
   "Display all categories where money is available"
@@ -421,8 +424,10 @@
            (mapcar (lambda (arg) (car arg)) category-names-and-ids)))
          (amount (completing-read "Set amount: " nil)))
 
-    (let ((existing-category-amount (cadr (assoc choice category-names-and-ids)))
-          (user-provided-amount (round (* (string-to-number amount) 1000))))
+    (let ((existing-category-amount
+           (cadr (assoc choice category-names-and-ids)))
+          (user-provided-amount
+           (round (* (string-to-number amount) 1000))))
       (ynab--update-category
        (+ existing-category-amount user-provided-amount)
        (nth 2 (assoc choice category-names-and-ids)))))
