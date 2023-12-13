@@ -242,6 +242,7 @@
                entries)))
     entries))
 
+;; TODO swap nested ifs for cond
 (defun ynab--format-balance (balance goal-under-funded)
   "Formats `'balance`' based on `'goal-under-funded`': if `'goal-under-funded`' is
    positive and `'balance`' is non-negative, `'balance`' is displayed in a modified
@@ -262,6 +263,7 @@
         (ynab--format-budget balance))
     (ynab--format-budget balance)))
 
+;; TODO cond
 (defun ynab--format-budget (balance)
   "Formats `'balance`': if positive, it's displayed in an added face,
    if exactly zero, as plain money, and if negative, in a removed face.
@@ -317,6 +319,7 @@
   :lighter " YNAB"
   :keymap ynab--mode-map)
 
+;; TODO clean this up
 (defun ynab--filter-by-non-zero-element (element list)
   (let ((non-zero-elements '()))
     (cl-loop
@@ -409,19 +412,19 @@
   "Assign money"
   (interactive)
 
-  (let* ((category-names-and-ids
+  (let* ((category-identifiers-and-budgets
           (mapcar
-           (lambda (arg)
+           (lambda (category)
              (list
-              (ynab--get-assoc-element 'name arg)
-              (ynab--get-assoc-element 'budgeted arg)
-              (ynab--get-assoc-element 'id arg)))
+              (ynab--get-assoc-element 'name category)
+              (ynab--get-assoc-element 'budgeted category)
+              (ynab--get-assoc-element 'id category)))
            ynab--categories))
          (categories)
          (choice
           (completing-read
            "Choose category to assign to: "
-           (mapcar (lambda (arg) (car arg)) category-names-and-ids)))
+           (mapcar (lambda (category) (car category)) category-identifiers-and-budgets)))
          (amount (completing-read "Set amount: " nil)))
 
     (let ((existing-category-amount
@@ -432,23 +435,6 @@
        (+ existing-category-amount user-provided-amount)
        (nth 2 (assoc choice category-names-and-ids)))))
   (ynab-update))
-
-(defun ynab-search ()
-  "Search through categories and select one for view"
-  (interactive)
-  (let ((choice
-         (completing-read
-          "Search: "
-          (mapcar
-           (lambda (arg)
-             (ynab--get-assoc-element 'name arg))
-           ynab--categories))))
-
-    (let ((category
-           (-filter
-            (lambda (x)
-              (string= (cadr (assoc 'name x)) choice))
-            ynab--categories))))))
 
 (defun ynab-budget ()
   "Open your YNAB budget for the current month"
