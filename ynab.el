@@ -353,43 +353,45 @@
           (princ
            "You must set your budget ID and API key. Please see: \n\nC-h v ynab-set-budget-id \n\nC-h v ynab-set-api-key"))))))
 
-;; TODO mapcar
 (defun ynab-available ()
   "Display all categories where money is available"
   (interactive)
 
-  (let ((available
-         (ynab--filter-by-non-zero-element
-          'balance ynab--categories)))
-    (ynab--init-and-switch-to-budget-buffer
-     (vconcat available) ynab--to-be-budgeted)))
+  (ynab--init-and-switch-to-budget-buffer
+   (vconcat
+    (seq-filter
+     (lambda (category)
+       (if (> (ynab--get-assoc-element 'balance category) 0)
+           category))
+     ynab--categories))
+   ynab--to-be-budgeted))
 
-;; TODO mapcar
 (defun ynab-underfunded ()
   "Display categories by underfunded"
   (interactive)
 
-  (let ((underfunded
-         (ynab--filter-by-non-zero-element
-          'goal_under_funded ynab--categories)))
-    (ynab--init-and-switch-to-budget-buffer
-     (vconcat underfunded) ynab--to-be-budgeted)))
+  (ynab--init-and-switch-to-budget-buffer
+   (vconcat
+    (seq-filter
+     (lambda (category)
+       (ignore-errors (if (> (ynab--get-assoc-element 'goal_under_funded category) 0)
+           category)))
+     ynab--categories))
+   ynab--to-be-budgeted))
 
-;; TODO mapcar
 (defun ynab-spent ()
   "Display categories where you have spent money"
   (interactive)
 
-  (let ((spent '()))
-    (cl-loop
-     for element across ynab--categories do
-     (if (ynab--get-assoc-element 'activity element)
-         (if (> 0 (ynab--get-assoc-element 'activity element))
-             (push element spent))))
-    (ynab--init-and-switch-to-budget-buffer
-     (vconcat spent) ynab--to-be-budgeted)))
+  (ynab--init-and-switch-to-budget-buffer
+   (vconcat
+    (seq-filter
+     (lambda (category)
+       (if (> 0 (ynab--get-assoc-element 'activity category))
+           category))
+     ynab--categories))
+   ynab--to-be-budgeted))
 
-;; TODO mapcar
 (defun ynab-categories ()
   "Display categories by their respective category group"
   (interactive)
@@ -412,7 +414,6 @@
     (ynab--init-and-switch-to-budget-buffer
      (vconcat entries-in-category-group) ynab--to-be-budgeted)))
 
-;; TODO assign based on line under point
 (defun ynab-assign ()
   "Assign money"
   (interactive)
@@ -429,16 +430,19 @@
          (choice
           (completing-read
            "Choose a category to assign to: "
-           (mapcar (lambda (category) (car category)) category-identifiers-and-budgets)))
-         (amount (completing-read "Assign amount (e.g.: -2.99): " nil)))
+           (mapcar
+            (lambda (category) (car category))
+            category-identifiers-and-budgets)))
+         (amount
+          (completing-read "Assign amount (e.g.: -2.99): " nil)))
 
     (let ((existing-category-amount
-           (cadr (assoc choice category-names-and-ids)))
+           (cadr (assoc choice category-identifiers-and-budgets)))
           (user-provided-amount
            (round (* (string-to-number amount) 1000))))
       (ynab--update-category
        (+ existing-category-amount user-provided-amount)
-       (nth 2 (assoc choice category-names-and-ids)))))
+       (nth 2 (assoc choice category-identifiers-and-budgets)))))
   (ynab-update))
 
 (defun ynab-budget ()
